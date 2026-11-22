@@ -16,10 +16,28 @@ Built by **Krishna Prakash Ojha (Leon)** at **OmegaAPI** · [omegaapi.com](https
 
 - 6 sample doctors — Invented names and specialties
 - No sign-up — Open the page and try it
-- Local log only — Choices stay in this browser
+- Database-backed — Actions stored in D1, never shared
 - Free to host — Cloudflare free tier
 - A three-step workflow and four quick actions
-- A local activity log that stays in your browser
+- An activity log stored in the demo database
+
+## Full-stack architecture
+
+- Frontend: static HTML/CSS/JS served by Cloudflare Pages.
+- Backend: Pages Functions with a D1 binding named `DB`.
+- Database: shared D1 database `omegaapi-demos`; this app uses its own namespace `DoctorIQ`.
+- API:
+  - `GET /api/state` — read config, records, and activity.
+  - `POST /api/action` — record a simulated quick action.
+  - `POST /api/records` — add a server-generated sample row.
+  - `DELETE /api/records?id=<id>` — remove a sample row.
+  - `POST /api/reset` — restore original simulated seed data.
+
+Apply the schema once before the first deploy:
+
+```bash
+npm run db:seed
+```
 
 ## Safety and privacy
 
@@ -27,7 +45,7 @@ Every doctor, slot, and token below is invented. Nothing you click is sent to a 
 
 Original local SVG illustrations are included in this repository. No stock photos, real people, or external images are used.
 
-There is no sign-up, no database, no payment code, no API key, and no external data service. The signed three-day preview cookie is set by a Pages Function and contains only an expiry timestamp.
+There is no sign-up, no payment code, no API key, and no external data service. A Cloudflare D1 database stores only invented seed rows and simulated action logs. The signed three-day preview cookie is set by a Pages Function and contains only an expiry timestamp.
 
 ## Run locally
 
@@ -42,6 +60,7 @@ Open `http://localhost:8788`.
 ## Deploy
 
 ```bash
+npm run db:seed
 wrangler pages secret put DEMO_TRIAL_SECRET --project-name doctoriq
 npm run deploy
 ```
